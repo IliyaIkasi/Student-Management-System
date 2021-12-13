@@ -72,7 +72,7 @@ public class HomePage extends Application {
         closeView.setFitHeight(50);
         closeView.setFitWidth(50);
 
-        Image image6 = new Image("project\\images\\logout.png");
+        Image image6 = new Image("project\\images\\exit.png");
         ImageView logoutView = new ImageView(image6);
         logoutView.setFitWidth(50);
         logoutView.setFitHeight(50);
