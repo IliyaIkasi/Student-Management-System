@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -45,23 +44,23 @@ public class DeleteDashboard extends Application {
 
     // Class Duration
     Text durationText;
-    TextField durationTextField;
+    MenuItem tenMin;
+    MenuItem twentyMin;
+    MenuItem thirtyMin;
+    MenuItem fortyMin;
+    MenuItem fiftyMin;
+    MenuItem oneHour;
+    MenuButton durationMenu;
 
     // Section
-    Text sectionText;
+    Text gradeText;
     MenuItem grade1;
     MenuItem grade2;
     MenuItem grade3;
     MenuItem grade4;
     MenuItem grade5;
     MenuItem grade6;
-    MenuButton sectionTextField;
-
-//    // Gender
-//    Text genderText;
-//    MenuItem maleBtn;
-//    MenuItem femaleBtn;
-//    MenuButton genderMenu;
+    MenuButton gradeMenu;
 
     // Reset Button
     Button searchBtn;
@@ -69,13 +68,9 @@ public class DeleteDashboard extends Application {
     // Registration Button
     Button deleteBtn;
 
-    // Error Label
-    Label errorLabel;
-    // Notification Label
-    Label notification;
-
     // Delay
     PauseTransition delay;
+    Alert alert;
 
 
     Stage dashboard = new Stage();
@@ -128,7 +123,7 @@ public class DeleteDashboard extends Application {
 
 
         //Grade
-        periodText = new Text("Grade:");
+        periodText = new Text("Period:");
         period1 = new MenuItem("1st Period");
         period2 = new MenuItem("2nd Period");
         period3 = new MenuItem("3rd Period");
@@ -150,26 +145,36 @@ public class DeleteDashboard extends Application {
 
         // Class Duration
         durationText = new Text("Duration:");
-        durationTextField = new TextField();
-        durationTextField.setPromptText("Duration");
-        durationTextField.setMinWidth(200);
+        tenMin = new MenuItem("10Mins");
+        twentyMin = new MenuItem("20Mins");
+        thirtyMin = new MenuItem("30Mins");
+        fortyMin = new MenuItem("40Mins");
+        fiftyMin = new MenuItem("50Mins");
+        oneHour = new MenuItem("1hour");
+        durationMenu = new MenuButton("Select Duration", null, tenMin, twentyMin, thirtyMin, fortyMin, fiftyMin, oneHour);
+        tenMin.setOnAction(actionEvent -> durationMenu.setText(tenMin.getText()));
+        twentyMin.setOnAction(actionEvent -> durationMenu.setText(twentyMin.getText()));
+        thirtyMin.setOnAction(actionEvent -> durationMenu.setText(thirtyMin.getText()));
+        fortyMin.setOnAction(actionEvent -> durationMenu.setText(fortyMin.getText()));
+        fiftyMin.setOnAction(actionEvent -> durationMenu.setText(fiftyMin.getText()));
+        oneHour.setOnAction(actionEvent -> durationMenu.setText(oneHour.getText()));
 
 
         //Grade
-        sectionText = new Text("Grade:");
+        gradeText = new Text("Grade:");
         grade1 = new MenuItem("Jss1");
         grade2 = new MenuItem("Jss2");
         grade3 = new MenuItem("Jss3");
         grade4 = new MenuItem("SS1");
         grade5 = new MenuItem("SS2");
         grade6 = new MenuItem("SS3");
-        sectionTextField = new MenuButton("Select Grade", null, grade1, grade2, grade3, grade4, grade5, grade6);
-        grade1.setOnAction(e -> sectionTextField.setText(grade1.getText()));
-        grade2.setOnAction(e -> sectionTextField.setText(grade2.getText()));
-        grade3.setOnAction(e -> sectionTextField.setText(grade3.getText()));
-        grade4.setOnAction(e -> sectionTextField.setText(grade4.getText()));
-        grade5.setOnAction(e -> sectionTextField.setText(grade5.getText()));
-        grade6.setOnAction(e -> sectionTextField.setText(grade6.getText()));
+        gradeMenu = new MenuButton("Select Grade", null, grade1, grade2, grade3, grade4, grade5, grade6);
+        grade1.setOnAction(e -> gradeMenu.setText(grade1.getText()));
+        grade2.setOnAction(e -> gradeMenu.setText(grade2.getText()));
+        grade3.setOnAction(e -> gradeMenu.setText(grade3.getText()));
+        grade4.setOnAction(e -> gradeMenu.setText(grade4.getText()));
+        grade5.setOnAction(e -> gradeMenu.setText(grade5.getText()));
+        grade6.setOnAction(e -> gradeMenu.setText(grade6.getText()));
 
 
         // Reset Button
@@ -180,44 +185,28 @@ public class DeleteDashboard extends Application {
         deleteBtn = new Button("Delete");
         deleteBtn.setPadding(new Insets(10, 30, 10, 30));
 
-        //Error Label
-        errorLabel = new Label();
-        errorLabel.setPrefWidth(300);
-        errorLabel.setTextFill(Color.TOMATO);
-        errorLabel.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        errorLabel.setPadding(new Insets(0, 0, 0, 50));
-
-        //Notification Label
-        notification = new Label();
-        notification.setPrefWidth(300);
-        notification.setTextFill(Color.GREEN);
-        notification.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        notification.setPadding(new Insets(0, 0, 0, 50));
-
 
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.setHgap(20);
         gridPane.setPadding(new Insets(50, 0, 25, 200));
-        gridPane.addColumn(0, teacherIDText, nameText, periodText);
-        gridPane.addColumn(1, teacherIDTextField, nameTextField, periodMenu);
-        gridPane.addColumn(7, durationText, sectionText);
-        gridPane.addColumn(8, durationTextField, sectionTextField);
+        gridPane.addColumn(0, teacherIDText, periodText);
+        gridPane.addColumn(1, teacherIDTextField, periodMenu);
+        gridPane.addColumn(7, nameText, durationText, gradeText);
+        gridPane.addColumn(8, nameTextField, durationMenu, gradeMenu);
 
 
         GridPane displayPane = new GridPane();
         displayPane.setPadding(new Insets(25, 0, 0, 300));
         displayPane.setHgap(20);
         displayPane.setVgap(20);
-        displayPane.add(errorLabel, 3, 0);
-        displayPane.add(notification, 3, 1);
         displayPane.add(searchBtn, 1, 2);
         displayPane.add(deleteBtn, 4, 2);
 
-        delay = new PauseTransition(Duration.seconds(5));
+        delay = new PauseTransition(Duration.seconds(2));
         delay.setOnFinished(actionEvent -> {
             try {
-                new DisplayStudents().start(dashboard);
+                new Dashboard().start(dashboard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -228,7 +217,7 @@ public class DeleteDashboard extends Application {
         // Validation
         backBtn.setOnAction(actionEvent -> {
             try {
-                new ShowAdministrators().start(dashboard);
+                new Dashboard().start(dashboard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -236,27 +225,47 @@ public class DeleteDashboard extends Application {
         });
         deleteBtn.setOnAction(actionEvent -> {
             boolean idRegex = Pattern.matches("^art-ts-2021-[0-9]{4}$", teacherIDTextField.getText());
+            boolean nameRegex = Pattern.matches("^([A-Za-z]+( )[A-Za-z]\\w{1,20})$", nameTextField.getText());
             if (teacherIDTextField.getText().isEmpty() || nameTextField.getText().isEmpty() || periodText.getText().isEmpty()
-                    || durationText.getText().isEmpty() || sectionTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                    || durationText.getText().isEmpty() || gradeMenu.getText().isEmpty()) {
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if (!idRegex) {
-                errorLabel.setText("Admission Number Format Not Supported \n::: art-ts-2021-xxxx");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Admission Number Format Not Supported \n::: art-ts-2021-xxxx",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!nameRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if(periodMenu.getText().equals("Select Period")) {
-                errorLabel.setText("Grade Format Not Supported \n::: 1st - 8th Period");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Period Format Not Supported \n::: 1st - 8th Period",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if(durationMenu.getText().equals("Select Duration")) {
+                alert = new Alert(Alert.AlertType.NONE, "Duration Format Not Supported \n::: 10mins - 1hour",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if(gradeMenu.getText().equals("Select Grade")) {
+                alert = new Alert(Alert.AlertType.NONE, "Grade Format Not Supported \n::: Jss1 - Jss3/Ss1 - Ss3",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
-                errorLabel.setText("");
                 dbValidation();
             }
         });
         searchBtn.setOnAction(actionEvent -> {
             if (teacherIDTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter ID Number", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
-                errorLabel.setText("");
                 searchStudents();
             }
         });
@@ -278,12 +287,15 @@ public class DeleteDashboard extends Application {
 
     public void searchStudents() {
         try {
-            String sql = "Select TeacherID, TeacherName, Period, Duration, Section from art_college.teacher_dashboard where TeacherID = ? ";
+            String sql = "Select TeacherID, TeacherName, Period, Duration, Section from art_college.teacher_dashboard " +
+                    "where TeacherID = ? ";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, teacherIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                notification.setText("Welcome!!! Redirecting");
+                alert = new Alert(Alert.AlertType.NONE, "Searching in Progress\n" + teacherIDTextField.getText(), ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 String id = resultSet.getString(1);
                 String name = resultSet.getString(2);
                 String period = resultSet.getString(3);
@@ -291,12 +303,11 @@ public class DeleteDashboard extends Application {
                 String section = resultSet.getString(5);
 
                 teacherIDTextField.setText(id);                nameTextField.setText(name);
-                periodMenu.setText(period);           durationTextField.setText(duration);
-                sectionTextField.setText(section);
-                errorLabel.setText("");             notification.setText("");
+                periodMenu.setText(period);           durationMenu.setText(duration);
+                gradeMenu.setText(section);
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exist", ButtonType.OK);
-                alert.setTitle("User Doesn't Exist");
+                Alert alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exist", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             }
@@ -313,14 +324,11 @@ public class DeleteDashboard extends Application {
             preparedStatement.setString(1, teacherIDTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
             clearText();
-            notification.setText("Welcome!!! Redirecting");
-            PauseTransition delay = new PauseTransition(Duration.seconds(2));
-            delay.setOnFinished(actionEvent -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Deleted!!! \nRedirecting", ButtonType.OK);
-                alert.setTitle("Deleted from Database");
-                alert.showAndWait();
-//                this.delay.play();
-            });
+            alert = new Alert(Alert.AlertType.NONE, "Deleted from Database!!! \nRedirecting ",
+                    ButtonType.OK);
+            alert.setTitle("Art College Notification");
+            alert.showAndWait();
+            delay.play();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -329,16 +337,20 @@ public class DeleteDashboard extends Application {
 
     public void dbValidation() {
         try {
-            String sql = "select AdmissionNumber from art_college.students_details where AdmissionNumber = ?";
+            String sql = "select TeacherID from art_college.teacher_dashboard where TeacherID = ?";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, teacherIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exists", ButtonType.OK);
-                alert.setTitle("User Doesn't Exists");
+            if(!resultSet.next()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exists", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             } else {
+                alert = new Alert(Alert.AlertType.NONE, "Deleting from Teaching Database!!! \n Please Wait",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 deleteTeacher();
             }
 
@@ -353,9 +365,8 @@ public class DeleteDashboard extends Application {
 
     public void clearText() {
         teacherIDTextField.clear();                nameTextField.clear();
-        durationTextField.clear();
-        sectionTextField.setText("Select Grade");           periodMenu.setText("Select Period");
-        errorLabel.setText("");             notification.setText("");
+        durationMenu.setText("Select Duration");
+        gradeMenu.setText("Select Grade");           periodMenu.setText("Select Period");
     }
 
     public static void main(String[] args) {

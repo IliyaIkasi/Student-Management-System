@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -45,23 +44,23 @@ public class AddDashboard extends Application {
 
     // Class Duration
     Text durationText;
-    DatePicker durationTextField;
+    MenuItem tenMin;
+    MenuItem twentyMin;
+    MenuItem thirtyMin;
+    MenuItem fortyMin;
+    MenuItem fiftyMin;
+    MenuItem oneHour;
+    MenuButton durationMenu;
 
     // Section
-    Text sectionText;
+    Text gradeText;
     MenuItem grade1;
     MenuItem grade2;
     MenuItem grade3;
     MenuItem grade4;
     MenuItem grade5;
     MenuItem grade6;
-    MenuButton sectionTextField;
-
-//    // Gender
-//    Text genderText;
-//    MenuItem maleBtn;
-//    MenuItem femaleBtn;
-//    MenuButton genderMenu;
+    MenuButton gradeMenu;
 
     // Reset Button
     Button resetBtn;
@@ -69,13 +68,9 @@ public class AddDashboard extends Application {
     // Registration Button
     Button registerBtn;
 
-    // Error Label
-    Label errorLabel;
-    // Notification Label
-    Label notification;
-
     // Delay
     PauseTransition delay;
+    Alert alert;
 
 
     Stage dashboard = new Stage();
@@ -128,15 +123,15 @@ public class AddDashboard extends Application {
 
 
         //Grade
-        periodText = new Text("Grade:");
+        periodText = new Text("Period:");
         period1 = new MenuItem("1st Period");
-        period2 = new MenuItem("2st Period");
-        period3 = new MenuItem("3st Period");
-        period4 = new MenuItem("4st Period");
-        period5 = new MenuItem("5st Period");
-        period6 = new MenuItem("6st Period");
-        period7 = new MenuItem("7st Period");
-        period8 = new MenuItem("8st Period");
+        period2 = new MenuItem("2nd Period");
+        period3 = new MenuItem("3rd Period");
+        period4 = new MenuItem("4th Period");
+        period5 = new MenuItem("5th Period");
+        period6 = new MenuItem("6th Period");
+        period7 = new MenuItem("7th Period");
+        period8 = new MenuItem("8th Period");
         periodMenu = new MenuButton("Select Period", null, period1, period2, period3, period4, period5, period6, period7, period8);
         period1.setOnAction(e -> periodMenu.setText(period1.getText()));
         period2.setOnAction(e -> periodMenu.setText(period2.getText()));
@@ -149,26 +144,36 @@ public class AddDashboard extends Application {
 
         // Class Duration
         durationText = new Text("Duration:");
-        durationTextField = new DatePicker();
-        durationTextField.setPromptText("Duration");
-        durationTextField.setMinWidth(200);
+        tenMin = new MenuItem("10Mins");
+        twentyMin = new MenuItem("20Mins");
+        thirtyMin = new MenuItem("30Mins");
+        fortyMin = new MenuItem("40Mins");
+        fiftyMin = new MenuItem("50Mins");
+        oneHour = new MenuItem("1hour");
+        durationMenu = new MenuButton("Select Duration", null, tenMin, twentyMin, thirtyMin, fortyMin, fiftyMin, oneHour);
+        tenMin.setOnAction(actionEvent -> durationMenu.setText(tenMin.getText()));
+        twentyMin.setOnAction(actionEvent -> durationMenu.setText(twentyMin.getText()));
+        thirtyMin.setOnAction(actionEvent -> durationMenu.setText(thirtyMin.getText()));
+        fortyMin.setOnAction(actionEvent -> durationMenu.setText(fortyMin.getText()));
+        fiftyMin.setOnAction(actionEvent -> durationMenu.setText(fiftyMin.getText()));
+        oneHour.setOnAction(actionEvent -> durationMenu.setText(oneHour.getText()));
 
 
         //Grade
-        sectionText = new Text("Grade:");
+        gradeText = new Text("Grade:");
         grade1 = new MenuItem("Jss1");
         grade2 = new MenuItem("Jss2");
         grade3 = new MenuItem("Jss3");
         grade4 = new MenuItem("SS1");
         grade5 = new MenuItem("SS2");
         grade6 = new MenuItem("SS3");
-        sectionTextField = new MenuButton("Select Grade", null, grade1, grade2, grade3, grade4, grade5, grade6);
-        grade1.setOnAction(e -> sectionTextField.setText(grade1.getText()));
-        grade2.setOnAction(e -> sectionTextField.setText(grade2.getText()));
-        grade3.setOnAction(e -> sectionTextField.setText(grade3.getText()));
-        grade4.setOnAction(e -> sectionTextField.setText(grade4.getText()));
-        grade5.setOnAction(e -> sectionTextField.setText(grade5.getText()));
-        grade6.setOnAction(e -> sectionTextField.setText(grade6.getText()));
+        gradeMenu = new MenuButton("Select Grade", null, grade1, grade2, grade3, grade4, grade5, grade6);
+        grade1.setOnAction(e -> gradeMenu.setText(grade1.getText()));
+        grade2.setOnAction(e -> gradeMenu.setText(grade2.getText()));
+        grade3.setOnAction(e -> gradeMenu.setText(grade3.getText()));
+        grade4.setOnAction(e -> gradeMenu.setText(grade4.getText()));
+        grade5.setOnAction(e -> gradeMenu.setText(grade5.getText()));
+        grade6.setOnAction(e -> gradeMenu.setText(grade6.getText()));
 
 
         // Reset Button
@@ -179,44 +184,28 @@ public class AddDashboard extends Application {
         registerBtn = new Button("Register");
         registerBtn.setPadding(new Insets(10, 30, 10, 30));
 
-        //Error Label
-        errorLabel = new Label();
-        errorLabel.setPrefWidth(300);
-        errorLabel.setTextFill(Color.TOMATO);
-        errorLabel.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        errorLabel.setPadding(new Insets(0, 0, 0, 50));
-
-        //Notification Label
-        notification = new Label();
-        notification.setPrefWidth(300);
-        notification.setTextFill(Color.GREEN);
-        notification.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        notification.setPadding(new Insets(0, 0, 0, 50));
-
 
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.setHgap(20);
         gridPane.setPadding(new Insets(50, 0, 25, 200));
-        gridPane.addColumn(0, teacherIDText, nameText, periodText);
-        gridPane.addColumn(1, teacherIDTextField, nameTextField, periodMenu);
-        gridPane.addColumn(7, durationText, sectionText);
-        gridPane.addColumn(8, durationTextField, sectionTextField);
+        gridPane.addColumn(0, teacherIDText, periodText);
+        gridPane.addColumn(1, teacherIDTextField, periodMenu);
+        gridPane.addColumn(7, nameText, durationText, gradeText);
+        gridPane.addColumn(8, nameTextField, durationMenu, gradeMenu);
 
 
         GridPane displayPane = new GridPane();
         displayPane.setPadding(new Insets(25, 0, 0, 300));
         displayPane.setHgap(20);
         displayPane.setVgap(20);
-        displayPane.add(errorLabel, 3, 0);
-        displayPane.add(notification, 3, 1);
         displayPane.add(resetBtn, 1, 2);
         displayPane.add(registerBtn, 4, 2);
 
         delay = new PauseTransition(Duration.seconds(5));
         delay.setOnFinished(actionEvent -> {
             try {
-                new DisplayStudents().start(dashboard);
+                new Dashboard().start(dashboard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -227,7 +216,7 @@ public class AddDashboard extends Application {
         // Validation
         backBtn.setOnAction(actionEvent -> {
             try {
-                new ShowAdministrators().start(dashboard);
+                new Dashboard().start(dashboard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -235,18 +224,36 @@ public class AddDashboard extends Application {
         });
         registerBtn.setOnAction(actionEvent -> {
             boolean idRegex = Pattern.matches("^art-ts-2021-[0-9]{4}$", teacherIDTextField.getText());
+            boolean nameRegex = Pattern.matches("^([A-Za-z]+( )[A-Za-z]\\w{1,20})$", nameTextField.getText());
             if (teacherIDTextField.getText().isEmpty() || nameTextField.getText().isEmpty() || periodText.getText().isEmpty()
-                    || durationText.getText().isEmpty() || sectionTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                    || durationText.getText().isEmpty() || gradeMenu.getText().isEmpty()) {
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if (!idRegex) {
-                errorLabel.setText("Admission Number Format Not Supported \n::: art-ts-2021-xxxx");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Teacher ID Format Not Supported \n::: art-ts-2021-xxxx", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!nameRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if(periodMenu.getText().equals("Select Period")) {
-                errorLabel.setText("Grade Format Not Supported \n::: 1st - 8th Period");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Period Format Not Supported \n::: 1st - 8th Period",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (durationMenu.getText().equals("Select Duration")) {
+                alert = new Alert(Alert.AlertType.NONE, "Duration Format Not Supported \n::: 10min - 1hour",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (gradeMenu.getText().equals("Select Grade")) {
+                alert = new Alert(Alert.AlertType.NONE, "Grade Format Not Supported \n::: Jss1 - Jss3/Ss1 - Ss3",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
-                errorLabel.setText("");
                 dbValidation();
             }
         });
@@ -274,11 +281,13 @@ public class AddDashboard extends Application {
             preparedStatement.setString(1, teacherIDTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(2, nameTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(3, periodMenu.getText().toLowerCase(Locale.ROOT));
-            preparedStatement.setString(4, durationTextField.getValue().toString().toLowerCase(Locale.ROOT));
-            preparedStatement.setString(5, sectionTextField.getText().toLowerCase(Locale.ROOT));
+            preparedStatement.setString(4, durationMenu.getText().toLowerCase(Locale.ROOT));
+            preparedStatement.setString(5, gradeMenu.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
             clearText();
-            notification.setText("Welcome!!! Redirecting");
+            alert = new Alert(Alert.AlertType.NONE, "Successfully Added to Database", ButtonType.OK);
+            alert.setTitle("Art College Notification");
+            alert.showAndWait();
             delay.play();
 
         } catch (SQLException throwables) {
@@ -288,17 +297,18 @@ public class AddDashboard extends Application {
 
     public void dbValidation() {
         try {
-            String sql = "select AdmissionNumber from art_college.students_details where AdmissionNumber = ?";
+            String sql = "select TeacherID from art_college.teacher_dashboard where TeacherID = ?";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, teacherIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Already Exists", ButtonType.OK);
-                alert.setTitle("User Already Exists");
+                alert = new Alert(Alert.AlertType.NONE, "User Already Exists", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
-                new DisplayStudents().start(dashboard);
             } else {
-                notification.setText("Welcome!!! Redirecting");
+                alert = new Alert(Alert.AlertType.NONE, "Adding to Database", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 registerStudents();
             }
 
@@ -313,8 +323,8 @@ public class AddDashboard extends Application {
 
     public void clearText() {
         teacherIDTextField.clear();                nameTextField.clear();
-        sectionTextField.setText("Select Grade");           periodMenu.setText("Select Period");
-        errorLabel.setText("");             notification.setText("");
+        durationMenu.setText("Select Duration");
+        gradeMenu.setText("Select Grade");           periodMenu.setText("Select Period");
     }
 
     public static void main(String[] args) {

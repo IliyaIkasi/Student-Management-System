@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class UpdateStudents extends Application {
     TextField nameTextField;
     // Date of Birth
     Text dOBText;
-    TextField dOBTextField;
+    DatePicker dOBTextField;
     // Contact Number
     Text contactText;
     TextField contactTextField;
@@ -59,6 +60,7 @@ public class UpdateStudents extends Application {
 
     // Delay
     PauseTransition delay;
+    Alert alert;
 
 
     Stage displayPage = new Stage();
@@ -111,7 +113,7 @@ public class UpdateStudents extends Application {
 
         // Date Of Birth
         dOBText = new Text("Date of Birth:");
-        dOBTextField = new TextField();
+        dOBTextField = new DatePicker();
         dOBTextField.setPromptText("YY-MM-DD");
         dOBTextField.setMinWidth(200);
 
@@ -205,33 +207,33 @@ public class UpdateStudents extends Application {
             boolean contactRegex = Pattern.matches("^([+234])[0-9]{13}$", contactTextField.getText());
             if (idTextField.getText().isEmpty() || nameTextField.getText().isEmpty() || genderMenu.getText().isEmpty()
                     || contactTextField.getText().isEmpty() || addressTextField.getText().isEmpty() || gradeMenu.getText().isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
-                alert.setTitle("Blank Details");
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if (!idRegex) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Admission Number Format Not Supported \n::: art-ss/jss-2021-xxxx",
+                alert = new Alert(Alert.AlertType.NONE, "Admission Number Format Not Supported \n::: art-ss/jss-2021-xxxx",
                         ButtonType.OK);
-                alert.setTitle("Invalid ID Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if (!nameRegex) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName",
+                alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName",
                         ButtonType.OK);
-                alert.setTitle("Invalid Name Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if(genderMenu.getText().equals("Select Gender")) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Gender Format Not Supported \n::: Male or Female",
+                alert = new Alert(Alert.AlertType.NONE, "Gender Format Not Supported \n::: Male or Female",
                         ButtonType.OK);
-                alert.setTitle("Invalid Gender Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if(!contactRegex) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Phone Format Not Supported \n::: +234xxxxxxxxxx",
+                alert = new Alert(Alert.AlertType.NONE, "Phone Format Not Supported \n::: +234xxxxxxxxxx",
                         ButtonType.OK);
-                alert.setTitle("Invalid Phone Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if(gradeMenu.getText().equals("Select Grade")) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Grade Format Not Supported \n::: Jss1-3 to SS1-3",
+                alert = new Alert(Alert.AlertType.NONE, "Grade Format Not Supported \n::: Jss1-3 to SS1-3",
                         ButtonType.OK);
-                alert.setTitle("Invalid Grade Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else {
                 dbValidation();
@@ -239,8 +241,8 @@ public class UpdateStudents extends Application {
         });
         searchBtn.setOnAction(actionEvent -> {
             if (idTextField.getText().isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Enter ID Number", ButtonType.OK);
-                alert.setTitle("Blank ID Details");
+                alert = new Alert(Alert.AlertType.NONE, "Enter ID Number", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else {
                 searchStudents();
@@ -270,8 +272,8 @@ public class UpdateStudents extends Application {
             preparedStatement.setString(1, idTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.NONE, "Searching in Progress", ButtonType.OK);
-                alert.setTitle("Searching");
+                alert = new Alert(Alert.AlertType.NONE, "Searching in Progress!!!", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 String id = resultSet.getString(1);
                 String name = resultSet.getString(2);
@@ -283,11 +285,11 @@ public class UpdateStudents extends Application {
 
                 idTextField.setText(id);                nameTextField.setText(name);
                 contactTextField.setText(contact);      addressTextField.setText(address);
-                dOBTextField.setText(dob);
+                String s = String.valueOf(dob);                dOBTextField.setValue(LocalDate.parse(s));
                 genderMenu.setText(gender);             gradeMenu.setText(grade);
             } else {
-                Alert alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exists", ButtonType.OK);
-                alert.setTitle("User Doesn't Exists");
+                alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exists", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             }
@@ -304,7 +306,7 @@ public class UpdateStudents extends Application {
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, idTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(2, nameTextField.getText().toLowerCase(Locale.ROOT));
-            preparedStatement.setString(3, dOBTextField.getText().toLowerCase(Locale.ROOT));
+            preparedStatement.setString(3, dOBTextField.getValue().toString().toLowerCase(Locale.ROOT));
             preparedStatement.setString(4, genderMenu.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(5, contactTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(6, addressTextField.getText().toLowerCase(Locale.ROOT));
@@ -312,8 +314,8 @@ public class UpdateStudents extends Application {
             preparedStatement.setString(8, idTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
             clearText();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Updated!!! \nRedirecting", ButtonType.OK);
-            alert.setTitle("Updated Database");
+            alert = new Alert(Alert.AlertType.NONE, "Updated!!! \nRedirecting", ButtonType.OK);
+            alert.setTitle("Art College Notification");
             alert.showAndWait();
             delay.play();
         } catch (SQLException throwables) {
@@ -329,12 +331,12 @@ public class UpdateStudents extends Application {
             preparedStatement.setString(1, idTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(!resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Already Exists", ButtonType.OK);
-                alert.setTitle("User Already Exists");
+                alert = new Alert(Alert.AlertType.NONE, "User Already Exists", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Updating!!! \nPlease Wait!!!", ButtonType.OK);
-                alert.setTitle("Updating Database");
+                alert = new Alert(Alert.AlertType.NONE, "Updating to Students Database!!! \nPlease Wait!!!", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 updateStudents();
             }
@@ -348,7 +350,7 @@ public class UpdateStudents extends Application {
     public void clearText() {
         idTextField.clear();                            nameTextField.clear();
         contactTextField.clear();                       addressTextField.clear();
-        dOBTextField.clear();
+        dOBTextField.setValue(null);
         genderMenu.setText("Select Gender");            gradeMenu.setText("Select Grade");
     }
 

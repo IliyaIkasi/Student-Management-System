@@ -73,9 +73,6 @@ public class Dashboard extends Application {
         Button deleteBtn = new Button("Delete");
         deleteBtn.setPrefSize(100, 50);
         deleteBtn.setStyle("-fx-background-color: red;");
-        Button refreshBtn = new Button("Refresh");
-        refreshBtn.setPrefSize(100, 50);
-        refreshBtn.setStyle("-fx-background-color: grey;");
 
 
         GridPane buttonsPane = new GridPane();
@@ -87,7 +84,6 @@ public class Dashboard extends Application {
         buttonsPane.addRow(0, addBtn);
         buttonsPane.addRow(1, updateBtn);
         buttonsPane.addRow(2, deleteBtn);
-        buttonsPane.addRow(3, refreshBtn);
 
         // InfoPane
         GridPane infoPane = new GridPane();
@@ -158,7 +154,7 @@ public class Dashboard extends Application {
                     }
                 });
                 table.getColumns().add(col);
-                System.out.println("Column ["+i+"] ");
+//                System.out.println("Column ["+i+"] ");
             }
 
             while (resultSet.next()) {

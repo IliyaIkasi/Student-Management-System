@@ -15,6 +15,7 @@ import java.util.Optional;
 
 
 public class HomePage extends Application {
+    Alert alert;
     @Override
     public void start(Stage stage) throws Exception {
         // School Image and GridPane
@@ -71,6 +72,11 @@ public class HomePage extends Application {
         closeView.setFitHeight(50);
         closeView.setFitWidth(50);
 
+        Image image6 = new Image("project\\images\\logout.png");
+        ImageView logoutView = new ImageView(image6);
+        logoutView.setFitWidth(50);
+        logoutView.setFitHeight(50);
+
 
         // Buttons
         Button dashboardBtn = new Button("\nDashboard", dashView);
@@ -90,18 +96,29 @@ public class HomePage extends Application {
 
         Button updateBtn = new Button("\nUpdate", updateView);
         updateBtn.setContentDisplay(ContentDisplay.TOP);
-        updateBtn.setPadding(new Insets(50, 63.5, 50, 63.5));
+        updateBtn.setPadding(new Insets(50, 60, 50, 60));
         updateBtn.setFocusTraversable(false);
 
         Button showAdminBtn = new Button("\nAdmin", settingsView);
         showAdminBtn.setContentDisplay(ContentDisplay.TOP);
-        showAdminBtn.setPadding(new Insets(50, 58, 50, 58));
+        showAdminBtn.setPadding(new Insets(50, 53.5, 50, 53.5));
         showAdminBtn.setFocusTraversable(false);
 
         Button closeBtn = new Button("\nClose", closeView);
         closeBtn.setContentDisplay(ContentDisplay.TOP);
-        closeBtn.setPadding(new Insets(50, 53.5, 50, 53.5));
+        closeBtn.setPadding(new Insets(50));
         closeBtn.setFocusTraversable(false);
+
+        Button logoutBtn = new Button("Logout", logoutView);
+        logoutBtn.setContentDisplay(ContentDisplay.TOP);
+        logoutBtn.setPadding(new Insets(10, 20, 10, 20));
+        logoutBtn.setFocusTraversable(false);
+
+
+        GridPane logoutPane = new GridPane();
+        logoutPane.setStyle("-fx-font-family: bold;");
+        logoutPane.setPadding(new Insets(100, 0, 0, 100));
+        logoutPane.add(logoutBtn, 0, 0);
 
 
         // Adding Buttons to GridPane
@@ -111,15 +128,17 @@ public class HomePage extends Application {
         gridPane.setHgap(20);
         gridPane.setVgap(20);
 
-        gridPane.addRow(0, dashboardBtn, studentsBtn, coursesBtn);
-        gridPane.addRow(1, updateBtn, showAdminBtn, closeBtn);
+        gridPane.addColumn(0, dashboardBtn, updateBtn);
+        gridPane.addColumn(1, studentsBtn, showAdminBtn);
+        gridPane.addColumn(2, coursesBtn, closeBtn);
+        gridPane.addColumn(4, logoutPane);
 
 
 
         // Adding Action Event Listeners
         dashboardBtn.setOnAction(actionEvent -> {
             Stage dashboardPage = new Stage();
-            new ShowAdministrators().start(dashboardPage);
+            new Dashboard().start(dashboardPage);
             stage.close();
         });
         studentsBtn.setOnAction(ActionEvent -> {
@@ -133,8 +152,8 @@ public class HomePage extends Application {
             stage.close();
         });
         updateBtn.setOnAction(actionEvent -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "No DeleteStudents Available", ButtonType.OK);
-            alert.setTitle("DeleteStudents");
+            alert = new Alert(Alert.AlertType.NONE, "No Notifications Available", ButtonType.OK);
+            alert.setTitle("Art College Notification");
             alert.show();
         });
         // Settings Button
@@ -144,7 +163,8 @@ public class HomePage extends Application {
             stage.close();
         });
         closeBtn.setOnAction(actionEvent -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you wish to exit?");
+            alert = new Alert(Alert.AlertType.NONE, "Do you wish to exit?");
+            alert.setTitle("Art College Notification");
 
             ButtonType yesBtn = new ButtonType("Yes", ButtonBar.ButtonData.YES);
             ButtonType noBtn = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -152,6 +172,25 @@ public class HomePage extends Application {
             alert.getButtonTypes().setAll(yesBtn, noBtn);
             Optional result = alert.showAndWait();
             if (result.get() == yesBtn){
+                stage.close();
+            }
+        });
+        logoutBtn.setOnAction(actionEvent -> {
+            alert = new Alert(Alert.AlertType.NONE, "Do you wish to logout?");
+
+            ButtonType yesBtn = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+            ButtonType noBtn = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(yesBtn, noBtn);
+            Optional result = alert.showAndWait();
+            if (result.get() == yesBtn){
+                Stage loginPage = new Stage();
+                try {
+                    new Login().start(loginPage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    e.getCause();
+                }
                 stage.close();
             }
         });

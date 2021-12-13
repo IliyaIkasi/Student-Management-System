@@ -200,7 +200,7 @@ public class AddStudents extends Application {
         displayPane.add(resetBtn, 1, 2);
         displayPane.add(registerBtn, 4, 2);
 
-        delay = new PauseTransition(Duration.seconds(5));
+        delay = new PauseTransition(Duration.seconds(2));
         delay.setOnFinished(actionEvent -> {
             try {
                 new DisplayStudents().start(displayPage);
@@ -227,32 +227,32 @@ public class AddStudents extends Application {
             if (idTextField.getText().isEmpty() || nameTextField.getText().isEmpty() || genderMenu.getText().isEmpty()
                 || contactTextField.getText().isEmpty() || addressTextField.getText().isEmpty() || gradeMenu.getText().isEmpty()) {
                 alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
-                alert.setTitle("Blank Details");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if (!idRegex) {
                 alert = new Alert(Alert.AlertType.NONE, "Admission Number Format Not Supported \n::: art-ss/jss-2021-xxxx",
                         ButtonType.OK);
-                alert.setTitle("Incorrect ID Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if (!nameRegex) {
                 alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \\n::: FirstName and LastName",
                         ButtonType.OK);
-                alert.setTitle("Incorrect Name Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if(genderMenu.getText().equals("Select Gender")) {
                 alert = new Alert(Alert.AlertType.NONE, "Gender Format Not Supported \\n::: Male or Female",
                         ButtonType.OK);
-                alert.setTitle("Incorrect Gender Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if(!contactRegex) {
                 alert = new Alert(Alert.AlertType.NONE, "Phone Format Not Supported \\n::: +234xxxxxxxxxx",
                         ButtonType.OK);
-                alert.setTitle("Incorrect Phone Number Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else if(gradeMenu.getText().equals("Select Grade")) {
                 alert = new Alert(Alert.AlertType.NONE, "Grade Format Not Supported \\n::: Jss1-3 to SS1-3",
                         ButtonType.OK);
-                alert.setTitle("Incorrect Grade Format");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
             } else {
                 dbValidation();
@@ -287,8 +287,8 @@ public class AddStudents extends Application {
             preparedStatement.setString(6, addressTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(7, gradeMenu.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
-            alert = new Alert(Alert.AlertType.NONE, "Successfully Added to Database");
-            alert.setTitle("Added to Database");
+            alert = new Alert(Alert.AlertType.NONE, "Successfully Added to Database", ButtonType.OK);
+            alert.setTitle("Art College Notification");
             alert.showAndWait();
             clearText();
             delay.play();
@@ -306,12 +306,12 @@ public class AddStudents extends Application {
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
                 alert = new Alert(Alert.AlertType.NONE, "User Already Exists", ButtonType.OK);
-                alert.setTitle("User Already Exists");
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
-                new DisplayStudents().start(displayPage);
+                clearText();
             } else {
-                alert = new Alert(Alert.AlertType.NONE, "Welcome!!! Redirecting", ButtonType.OK);
-                alert.setTitle("Welcome!!!");
+                alert = new Alert(Alert.AlertType.NONE, "Adding to Database", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 registerStudents();
             }
@@ -326,6 +326,7 @@ public class AddStudents extends Application {
     public void clearText() {
         idTextField.clear();                nameTextField.clear();
         contactTextField.clear();           addressTextField.clear();
+        dOBTextField.setValue(null);
         genderMenu.setText("Select Gender");            gradeMenu.setText("Select Grade");
         errorLabel.setText("");             notification.setText("");
     }

@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -39,23 +38,15 @@ public class UpdateAdministrators extends Application {
     Text emailText;
     TextField emailTextField;
 
-    // Class Duration
-    Text passwordText;
-    TextField passwordTextField;
-
     // Reset Button
     Button searchBtn;
 
     // Registration Button
     Button updateBtn;
 
-    // Error Label
-    Label errorLabel;
-    // Notification Label
-    Label notification;
-
     // Delay
     PauseTransition delay;
+    Alert alert;
 
 
     Stage dashboard = new Stage();
@@ -107,7 +98,7 @@ public class UpdateAdministrators extends Application {
         adminIDTextField.setMinWidth(200);
 
         // Class Duration
-        phoneNumberText = new Text("Duration:");
+        phoneNumberText = new Text("Phone Number:");
         phnNumTextField = new TextField();
         phnNumTextField.setPromptText("e.g +234xxxxxxxxx");
         phnNumTextField.setMinWidth(200);
@@ -117,12 +108,6 @@ public class UpdateAdministrators extends Application {
         emailTextField.setPromptText("e.g email@email.com");
         emailTextField.setMinWidth(200);
 
-        passwordText = new Text("Password");
-        passwordTextField = new TextField("");
-        passwordTextField.setPromptText("e.g abcd1234");
-        passwordTextField.setMinWidth(200);
-
-
         // Reset Button
         searchBtn = new Button("Search");
         searchBtn.setPadding(new Insets(10, 30, 10, 30));
@@ -130,20 +115,6 @@ public class UpdateAdministrators extends Application {
         // Registration Button
         updateBtn = new Button("Update");
         updateBtn.setPadding(new Insets(10, 30, 10, 30));
-
-        //Error Label
-        errorLabel = new Label();
-        errorLabel.setPrefWidth(300);
-        errorLabel.setTextFill(Color.TOMATO);
-        errorLabel.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        errorLabel.setPadding(new Insets(0, 0, 0, 50));
-
-        //Notification Label
-        notification = new Label();
-        notification.setPrefWidth(300);
-        notification.setTextFill(Color.GREEN);
-        notification.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        notification.setPadding(new Insets(0, 0, 0, 50));
 
 
         GridPane gridPane = new GridPane();
@@ -160,12 +131,10 @@ public class UpdateAdministrators extends Application {
         displayPane.setPadding(new Insets(25, 0, 0, 300));
         displayPane.setHgap(20);
         displayPane.setVgap(20);
-        displayPane.add(errorLabel, 3, 0);
-        displayPane.add(notification, 3, 1);
         displayPane.add(searchBtn, 1, 2);
         displayPane.add(updateBtn, 4, 2);
 
-        delay = new PauseTransition(Duration.seconds(5));
+        delay = new PauseTransition(Duration.seconds(2));
         delay.setOnFinished(actionEvent -> {
             try {
                 new ShowAdministrators().start(dashboard);
@@ -187,22 +156,45 @@ public class UpdateAdministrators extends Application {
         });
         updateBtn.setOnAction(actionEvent -> {
             boolean idRegex = Pattern.matches("^reg-art-2021-[0-9]{4}$", adminIDTextField.getText());
-            if (fullNameTextField.getText().isEmpty() || adminIDTextField.getText().isEmpty() || phnNumTextField.getText().isEmpty()
+            boolean nameRegex = Pattern.matches("^([A-Za-z]+( )[A-Za-z]\\w{1,20})$", fullNameTextField.getText());
+            boolean contactRegex = Pattern.matches("^([+234])[0-9]{13}$", phnNumTextField.getText());
+            boolean emailRegex =
+                    Pattern.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
+                            emailTextField.getText());
+            if (adminIDTextField.getText().isEmpty() || fullNameTextField.getText().isEmpty() || phnNumTextField.getText().isEmpty()
                     || emailTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("User Doesn't Exist");
+                alert.showAndWait();
             } else if (!idRegex) {
-                errorLabel.setText("Admission Number Format Not Supported \n::: art-ts-2021-xxxx");
-                notification.setText("");
-            }else {
-                errorLabel.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Admin ID Format Not Supported \n::: reg-art-2021-xxxx",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!nameRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!contactRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Phone Number Format Not Supported \n::: +234xxxxxxxxxx",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!emailRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Email Format Not Supported \n::: email@email.com",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else {
                 dbValidation();
             }
         });
         searchBtn.setOnAction(actionEvent -> {
             if (adminIDTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter ID Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter ID Number", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
                 searchTeachers();
             }
@@ -225,25 +217,24 @@ public class UpdateAdministrators extends Application {
 
     public void searchTeachers() {
         try {
-            String sql = "Select FullName, AdminID, PhoneNumber, Email from art_college.admin_details where AdminID = ? ";
+            String sql = "Select AdminID, FullName, PhoneNumber, Email from art_college.admin_details where AdminID = ? ";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                notification.setText("Welcome!!! Redirecting");
+                alert = new Alert(Alert.AlertType.NONE, "Searching in Progress", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 String id = resultSet.getString(1);
                 String name = resultSet.getString(2);
                 String phnNumber = resultSet.getString(3);
                 String email = resultSet.getString(4);
-//                String password = resultSet.getString(5);
 
-                fullNameTextField.setText(id);                adminIDTextField.setText(name);
+                fullNameTextField.setText(name);                adminIDTextField.setText(id);
                 phnNumTextField.setText(phnNumber);           emailTextField.setText(email);
-//                passwordTextField.setText(password);
-                errorLabel.setText("");             notification.setText("");
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exist", ButtonType.OK);
-                alert.setTitle("User Doesn't Exist");
+                alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exist", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             }
@@ -262,18 +253,13 @@ public class UpdateAdministrators extends Application {
             preparedStatement.setString(2, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(3, phnNumTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(4, emailTextField.getText().toLowerCase(Locale.ROOT));
-//            preparedStatement.setString(5, passwordTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.setString(5, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
             clearText();
-            notification.setText("Welcome!!! Redirecting");
-            PauseTransition delay = new PauseTransition(Duration.seconds(2));
-            delay.setOnFinished(actionEvent -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Updated!!! \nRedirecting", ButtonType.OK);
-                alert.setTitle("Updated Database");
-                alert.showAndWait();
-//                this.delay.play();
-            });
+            alert = new Alert(Alert.AlertType.NONE, "Updated!!! \nRedirecting", ButtonType.OK);
+            alert.setTitle("Art College Notification");
+            alert.showAndWait();
+            delay.play();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -282,16 +268,19 @@ public class UpdateAdministrators extends Application {
 
     public void dbValidation() {
         try {
-            String sql = "select AdmissionNumber from art_college.students_details where AdmissionNumber = ?";
+            String sql = "select AdminID from art_college.admin_details where AdminID = ?";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Already Exists", ButtonType.OK);
-                alert.setTitle("User Already Exists");
+            if(!resultSet.next()) {
+                alert = new Alert(Alert.AlertType.NONE, "User Already Exists", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
-                new DisplayStudents().start(dashboard);
+                clearText();
             } else {
+                alert = new Alert(Alert.AlertType.NONE, "Updating to Admin Database!!! \n Please Wait!!!", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 updateTeacher();
             }
 
@@ -307,8 +296,6 @@ public class UpdateAdministrators extends Application {
     public void clearText() {
         fullNameTextField.clear();          adminIDTextField.clear();
         phnNumTextField.clear();            emailTextField.clear();
-        passwordTextField.clear();
-        errorLabel.setText("");             notification.setText("");
     }
 
     public static void main(String[] args) {

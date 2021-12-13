@@ -39,23 +39,15 @@ public class DeleteAdministrators extends Application {
     Text emailText;
     TextField emailTextField;
 
-    // Class Duration
-    Text passwordText;
-    TextField passwordTextField;
-
     // Reset Button
     Button searchBtn;
 
     // Registration Button
     Button deleteBtn;
 
-    // Error Label
-    Label errorLabel;
-    // Notification Label
-    Label notification;
-
     // Delay
     PauseTransition delay;
+    Alert alert;
 
 
     Stage showAdmin = new Stage();
@@ -116,11 +108,6 @@ public class DeleteAdministrators extends Application {
         emailTextField.setPromptText("e.g email@email.com");
         emailTextField.setMinWidth(200);
 
-        passwordText = new Text("Password");
-        passwordTextField = new TextField("");
-        passwordTextField.setPromptText("e.g abcd1234");
-        passwordTextField.setMinWidth(200);
-
         // Reset Button
         searchBtn = new Button("Search");
         searchBtn.setPadding(new Insets(10, 30, 10, 30));
@@ -128,20 +115,6 @@ public class DeleteAdministrators extends Application {
         // Registration Button
         deleteBtn = new Button("Delete");
         deleteBtn.setPadding(new Insets(10, 30, 10, 30));
-
-        //Error Label
-        errorLabel = new Label();
-        errorLabel.setPrefWidth(300);
-        errorLabel.setTextFill(Color.TOMATO);
-        errorLabel.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        errorLabel.setPadding(new Insets(0, 0, 0, 50));
-
-        //Notification Label
-        notification = new Label();
-        notification.setPrefWidth(300);
-        notification.setTextFill(Color.GREEN);
-        notification.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        notification.setPadding(new Insets(0, 0, 0, 50));
 
 
         GridPane gridPane = new GridPane();
@@ -158,8 +131,6 @@ public class DeleteAdministrators extends Application {
         displayPane.setPadding(new Insets(25, 0, 0, 300));
         displayPane.setHgap(20);
         displayPane.setVgap(20);
-        displayPane.add(errorLabel, 3, 0);
-        displayPane.add(notification, 3, 1);
         displayPane.add(searchBtn, 1, 2);
         displayPane.add(deleteBtn, 4, 2);
 
@@ -185,24 +156,46 @@ public class DeleteAdministrators extends Application {
         });
         deleteBtn.setOnAction(actionEvent -> {
             boolean idRegex = Pattern.matches("^reg-art-2021-[0-9]{4}$", adminIDTextField.getText());
+            boolean nameRegex = Pattern.matches("^([A-Za-z]+( )[A-Za-z]\\w{1,20})$", fullNameTextField.getText());
+            boolean contactRegex = Pattern.matches("^([+234])[0-9]{13}$", phnNumTextField.getText());
+            boolean emailRegex =
+                    Pattern.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
+                            emailTextField.getText());
             if (adminIDTextField.getText().isEmpty() || fullNameTextField.getText().isEmpty() || phnNumTextField.getText().isEmpty()
                     || emailTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if (!idRegex) {
-                errorLabel.setText("Admission Number Format Not Supported \n::: reg-art-2021-xxxx");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Admission Number Format Not Supported \n::: reg-art-2021-xxxx",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!nameRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!contactRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Phone Number Format Not Supported \n::: +234xxxxxxxxxx",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
+            } else if (!emailRegex) {
+                alert = new Alert(Alert.AlertType.NONE, "Email Format Not Supported \n::: email@email.com",
+                        ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
-                errorLabel.setText("");
                 dbValidation();
             }
         });
         searchBtn.setOnAction(actionEvent -> {
             if (adminIDTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter ID Number", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
-                errorLabel.setText("");
                 searchStudents();
             }
         });
@@ -229,7 +222,9 @@ public class DeleteAdministrators extends Application {
             preparedStatement.setString(1, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                notification.setText("Welcome!!! Redirecting");
+                alert = new Alert(Alert.AlertType.NONE, "Searching in Progress", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 String id = resultSet.getString(1);
                 String name = resultSet.getString(2);
                 String phnNumber = resultSet.getString(3);
@@ -237,10 +232,9 @@ public class DeleteAdministrators extends Application {
 
                 adminIDTextField.setText(id);                fullNameTextField.setText(name);
                 phnNumTextField.setText(phnNumber);           emailTextField.setText(email);
-                errorLabel.setText("");             notification.setText("");
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exist", ButtonType.OK);
-                alert.setTitle("User Doesn't Exist");
+                Alert alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exist", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             }
@@ -257,14 +251,10 @@ public class DeleteAdministrators extends Application {
             preparedStatement.setString(1, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
             clearText();
-            notification.setText("Welcome!!! Redirecting");
-            PauseTransition delay = new PauseTransition(Duration.seconds(2));
-            delay.setOnFinished(actionEvent -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Deleted!!! \nRedirecting", ButtonType.OK);
-                alert.setTitle("Deleted from Database");
-                alert.showAndWait();
-                this.delay.play();
-            });
+            alert = new Alert(Alert.AlertType.NONE, "Deleted from Admin Database!!! \nRedirecting", ButtonType.OK);
+            alert.setTitle("Art College Notification");
+            alert.showAndWait();
+            delay.play();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -278,11 +268,14 @@ public class DeleteAdministrators extends Application {
             preparedStatement.setString(1, adminIDTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(!resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exists", ButtonType.OK);
-                alert.setTitle("User Doesn't Exists");
+                alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exists", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             } else {
+                alert = new Alert(Alert.AlertType.NONE, "Deleting from Admin Database!!! \n Please Wait!!!", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 deleteAdmin();
             }
 
@@ -297,8 +290,7 @@ public class DeleteAdministrators extends Application {
 
     public void clearText() {
         adminIDTextField.clear();                fullNameTextField.clear();
-        phnNumTextField.setText("Select Grade");           emailTextField.setText("Select Period");
-        errorLabel.setText("");             notification.setText("");
+        phnNumTextField.clear();           emailTextField.clear();
     }
 
     public static void main(String[] args) {

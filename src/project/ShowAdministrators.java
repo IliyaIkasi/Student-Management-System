@@ -64,18 +64,12 @@ public class ShowAdministrators extends Application {
         refreshAdmin();
 
         //Buttons
-//        Button addBtn = new Button("Add");
-//        addBtn.setPrefSize(100, 50);
-//        addBtn.setStyle("-fx-background-color: green");
         Button updateBtn = new Button("Update");
         updateBtn.setPrefSize(100, 50);
         updateBtn.setStyle("-fx-background-color: yellow;");
         Button deleteBtn = new Button("Delete");
         deleteBtn.setPrefSize(100, 50);
         deleteBtn.setStyle("-fx-background-color: red;");
-//        Button refreshBtn = new Button("Refresh");
-//        refreshBtn.setPrefSize(100, 50);
-//        refreshBtn.setStyle("-fx-background-color: grey;");
 
 
         GridPane buttonsPane = new GridPane();
@@ -84,10 +78,8 @@ public class ShowAdministrators extends Application {
         buttonsPane.setAlignment(Pos.TOP_CENTER);
         buttonsPane.setPadding(new Insets(100, 0, 0, 0));
         buttonsPane.setVgap(30);
-//        buttonsPane.addRow(0, addBtn);
         buttonsPane.addRow(1, updateBtn);
         buttonsPane.addRow(2, deleteBtn);
-//        buttonsPane.addRow(3, refreshBtn);
 
         // InfoPane
         GridPane infoPane = new GridPane();
@@ -139,7 +131,7 @@ public class ShowAdministrators extends Application {
 
     public void refreshAdmin() {
         try {
-            String sql = "Select * from art_college.admin_details";
+            String sql = "Select AdminID, FullName, PhoneNumber, Email from art_college.admin_details";
             data = FXCollections.observableArrayList();
             resultSet = conn.createStatement().executeQuery(sql);
 

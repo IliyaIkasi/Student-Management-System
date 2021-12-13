@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -39,9 +38,6 @@ public class DeleteStudents extends Application {
     // Home Address
     Text addressText;
     TextField addressTextField;
-    // Home Address
-    Text courseText;
-    TextField courseTextField;
 
     // Gender
     Text genderText;
@@ -62,13 +58,10 @@ public class DeleteStudents extends Application {
     // Registration Button
     Button deleteBtn;
 
-    // Error Label
-    Label errorLabel;
-    // Notification Label
-    Label notification;
 
     // Delay
     PauseTransition delay;
+    Alert alert;
 
 
     Stage displayPage = new Stage();
@@ -137,13 +130,6 @@ public class DeleteStudents extends Application {
         addressTextField.setPromptText("Address");
         addressTextField.setMinWidth(200);
 
-
-        // Address
-        courseText = new Text("Address:");
-        courseTextField = new TextField();
-        courseTextField.setPromptText("Address");
-        courseTextField.setMinWidth(200);
-
         //Gender
         genderText = new Text("Gender:");
         maleBtn = new MenuItem("Male");
@@ -177,20 +163,6 @@ public class DeleteStudents extends Application {
         deleteBtn = new Button("Delete");
         deleteBtn.setPadding(new Insets(10, 30, 10, 30));
 
-        //Error Label
-        errorLabel = new Label();
-        errorLabel.setPrefWidth(300);
-        errorLabel.setTextFill(Color.TOMATO);
-        errorLabel.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        errorLabel.setPadding(new Insets(0, 0, 0, 50));
-
-        //Notification Label
-        notification = new Label();
-        notification.setPrefWidth(300);
-        notification.setTextFill(Color.GREEN);
-        notification.setStyle("-fx-font: bold 13px 'TIMES NEW ROMAN';");
-        notification.setPadding(new Insets(0, 0, 0, 50));
-
 
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
@@ -198,20 +170,18 @@ public class DeleteStudents extends Application {
         gridPane.setPadding(new Insets(50, 0, 25, 200));
         gridPane.addColumn(0, idText, nameText, dOBText, genderText);
         gridPane.addColumn(1, idTextField, nameTextField, dOBTextField, genderMenu);
-        gridPane.addColumn(7, contactText, addressText, gradeText, courseText);
-        gridPane.addColumn(8, contactTextField, addressTextField, gradeMenu, courseTextField);
+        gridPane.addColumn(7, contactText, addressText, gradeText);
+        gridPane.addColumn(8, contactTextField, addressTextField, gradeMenu);
 
 
         GridPane displayPane = new GridPane();
         displayPane.setPadding(new Insets(25, 0, 0, 300));
         displayPane.setHgap(20);
         displayPane.setVgap(20);
-        displayPane.add(errorLabel, 3, 0);
-        displayPane.add(notification, 3, 1);
         displayPane.add(searchBtn, 1, 2);
         displayPane.add(deleteBtn, 4, 2);
 
-        delay = new PauseTransition(Duration.seconds(5));
+        delay = new PauseTransition(Duration.seconds(2));
         delay.setOnFinished(actionEvent -> {
             try {
                 new DisplayStudents().start(displayPage);
@@ -238,31 +208,38 @@ public class DeleteStudents extends Application {
             boolean contactRegex = Pattern.matches("^([+234])[0-9]{13}$", contactTextField.getText());
             if (idTextField.getText().isEmpty() || nameTextField.getText().isEmpty() || genderMenu.getText().isEmpty()
                     || contactTextField.getText().isEmpty() || addressTextField.getText().isEmpty() || gradeMenu.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if (!idRegex) {
-                errorLabel.setText("Admission Number Format Not Supported \n::: art-ss/jss-2021-xxxx");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Admission Number Format Not Supported \n::: art-ss/jss-2021-xxxx", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if (!nameRegex) {
-                errorLabel.setText("Name Format Not Supported \n::: FirstName and LastName");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Name Format Not Supported \n::: FirstName and LastName", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if(genderMenu.getText().equals("Select Gender")) {
-                errorLabel.setText("Gender Format Not Supported \n::: Male or Female");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Gender Format Not Supported \n::: Male or Female", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if(!contactRegex) {
-                errorLabel.setText("Phone Format Not Supported \n::: +234xxxxxxxxxx");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Phone Format Not Supported \n::: +234xxxxxxxxxx", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else if(gradeMenu.getText().equals("Select Grade")) {
-                errorLabel.setText("Grade Format Not Supported \n::: Jss1-3 to SS1-3");
+                alert = new Alert(Alert.AlertType.NONE, "Grade Format Not Supported \n::: Jss1-3 to SS1-3", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
-                errorLabel.setText("");
                 dbValidation();
             }
         });
         searchBtn.setOnAction(actionEvent -> {
             if (idTextField.getText().isEmpty()) {
-                errorLabel.setText("Enter All Details");
-                notification.setText("");
+                alert = new Alert(Alert.AlertType.NONE, "Enter All Details", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
             } else {
                 searchStudents();
             }
@@ -285,14 +262,15 @@ public class DeleteStudents extends Application {
 
     public void searchStudents() {
         try {
-            String sql = "Select AdmissionNumber, FullName, DOB, Gender, Contact, Address, Grade, Courses from " +
+            String sql = "Select AdmissionNumber, FullName, DOB, Gender, Contact, Address, Grade from " +
                     "art_college.students_details where AdmissionNumber = ? ";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, idTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                notification.setText("Welcome!!! Redirecting");
-//                new DisplayStudents().start(displayPage);
+                alert = new Alert(Alert.AlertType.NONE, "Searching in Progress", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 String id = resultSet.getString(1);
                 String name = resultSet.getString(2);
                 String dob = resultSet.getString(3);
@@ -300,17 +278,15 @@ public class DeleteStudents extends Application {
                 String contact = resultSet.getString(5);
                 String address = resultSet.getString(6);
                 String grade = resultSet.getString(7);
-                String course = resultSet.getString(8);
 
                 idTextField.setText(id);                nameTextField.setText(name);
                 contactTextField.setText(contact);           addressTextField.setText(address);
                 String s = String.valueOf(dob);             dOBTextField.setValue(LocalDate.parse(s));
-                genderMenu.setText(gender);            gradeMenu.setText(grade);  courseTextField.setText(course);
-                errorLabel.setText("");             notification.setText("");
+                genderMenu.setText(gender);            gradeMenu.setText(grade);
                 System.out.println(s);
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exist", ButtonType.OK);
-                alert.setTitle("User Doesn't Exist");
+                alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exist", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             }
@@ -327,13 +303,10 @@ public class DeleteStudents extends Application {
             preparedStatement.setString(1, idTextField.getText().toLowerCase(Locale.ROOT));
             preparedStatement.executeUpdate();
             clearText();
-            PauseTransition delay = new PauseTransition(Duration.seconds(2));
-            delay.setOnFinished(actionEvent -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Deleted!!! \nRedirecting", ButtonType.OK);
-                alert.setTitle("Deleted from Database");
-                alert.showAndWait();
-                this.delay.play();
-            });
+            alert = new Alert(Alert.AlertType.NONE, "Deleted from Database!!! \nRedirecting!!!", ButtonType.OK);
+            alert.setTitle("Art College Notification");
+            alert.showAndWait();
+            this.delay.play();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -348,12 +321,14 @@ public class DeleteStudents extends Application {
             preparedStatement.setString(1, idTextField.getText().toLowerCase(Locale.ROOT));
             resultSet = preparedStatement.executeQuery();
             if(!resultSet.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "User Doesn't Exist", ButtonType.OK);
-                alert.setTitle("User Doesn't Exist");
+                alert = new Alert(Alert.AlertType.NONE, "User Doesn't Exist", ButtonType.OK);
+                alert.setTitle("Art College Notification");
                 alert.showAndWait();
                 clearText();
             } else {
-                notification.setText("Updating!!! \nPlease Wait!!!");
+                alert = new Alert(Alert.AlertType.NONE, "Deleting from Database!!! \nPlease Wait!!!", ButtonType.OK);
+                alert.setTitle("Art College Notification");
+                alert.showAndWait();
                 deleteStudents();
             }
 
@@ -366,9 +341,8 @@ public class DeleteStudents extends Application {
     public void clearText() {
         idTextField.clear();                nameTextField.clear();
         contactTextField.clear();           addressTextField.clear();
-        dOBTextField.setValue(null);     courseTextField.clear();
+        dOBTextField.setValue(null);
         genderMenu.setText("Select Gender");            gradeMenu.setText("Select Grade");
-        errorLabel.setText("");             notification.setText("");
     }
 
     public DeleteStudents() { conn = JDBC.connectDB(); }
